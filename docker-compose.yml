@@ -1,0 +1,26 @@
+version: "3"
+services:
+  gallery_api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: gunicorn backend.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - static_volume:/app/staticfiles/
+      - media_volume:/app/mediafiles/
+    expose:
+      - 8000
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+    volumes:
+      - static_volume:/app/staticfiles/
+      - media_volume:/app/mediafiles/
+    depends_on:
+      - gallery_api
+volumes:
+  static_volume:
+  media_volume:
